@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Profile{% endblock title %}
+
+{% block body %}
+
+<main class="flex-grow flex justify-center items-center">
+    <form
+        class="w-11/12 md:w-4/5 lg:w-3/5 xl:w-2/5 mx-auto border p-6 lg:p-8 xl:p-12 border-slate-500 rounded-lg bg-slate-900" method="POST">
+        <h1 class="text-center font-bold text-4xl">Profile</h1>
+        <hr class="my-8 opacity-40 w-10/12 mx-auto">
+        {% csrf_token %}
+        <div class="relative z-0 w-full mt-16 mb-5 group">
+            {% if form.errors.email %}
+                {% render_field form.email class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-red-500 appearance-none text-red-400 focus:outline-none focus:ring-0 focus:border-red-500 peer" %}
+                <label for="floating_email"
+                class="peer-focus:font-medium absolute text-sm text-red-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-red-600 peer-focus:dark:text-red-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email Address</label>
+                {% for error in form.errors.email %}
+                <p class="text-sm text-red-600 dark:text-red-500"><span class="font-medium">{{ error }}</p>
+                {% endfor %}
+                {% else %}
+                {% render_field form.email class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" %}
+                <label for="floating_email"
+                    class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone
+                    number</label>
+                {% endif %}
+        </div>
+        <div class="grid md:grid-cols-2 md:gap-6">
+            <div class="relative z-0 w-full mb-5 group">
+                {% if form.errors.full_name %}
+                {% render_field form.full_name class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-red-500 appearance-none text-red-400 focus:outline-none focus:ring-0 focus:border-red-500 peer" %}
+                <label for="floating_full_name"
+                class="peer-focus:font-medium absolute text-sm text-red-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-red-600 peer-focus:dark:text-red-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Full Name</label>
+                {% for error in form.errors.full_name %}
+                <p class="text-sm text-red-600 dark:text-red-500"><span class="font-medium">{{ error }}</p>
+                {% endfor %}
+                {% else %}
+                {% render_field form.full_name class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" %}
+                <label for="floating_full_name"
+                    class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Full Name</label>
+                {% endif %}
+            </div>
+            <div class="relative z-0 w-full mb-5 group">
+                {% if form.errors.phone_number %}
+                {% render_field form.phone_number class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-red-500 appearance-none text-red-400 focus:outline-none focus:ring-0 focus:border-red-500 peer" %}
+                <label for="floating_phone"
+                class="peer-focus:font-medium absolute text-sm text-red-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-red-600 peer-focus:dark:text-red-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone
+                number</label>
+                {% for error in form.errors.phone_number %}
+                <p class="text-sm text-red-600 dark:text-red-500"><span class="font-medium">{{ error }}</p>
+                {% endfor %}
+                {% else %}
+                {% render_field form.phone_number class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" %}
+                <label for="floating_phone"
+                    class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone
+                    number</label>
+                {% endif %}
+            </div>
+        </div>
+        {% if form.errors.birthdate %}
+        <label for="time" class="block mb-2 text-sm font-medium text-red-600">Birthday date:</label>
+        <div class="relative z-0 w-full group">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                </svg>
+            </div>
+            {% render_field form.birthdate class="bg-gray-50 border border-red-500 text-red-500 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-red-600 dark:placeholder-red-400 dark:text-white dark:focus:ring-red-500 dark:focus:border-red-500" %}
+        </div>
+        {% for error in form.errors.birthdate %}
+            <p class="text-sm text-red-600 dark:text-red-500"><span class="font-medium">{{ error }}</p>
+        {% endfor %}
+        {% else %}
+        <label for="time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Birthday date:</label>
+        <div class="relative z-0 w-full mb-12 group">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                </svg>
+            </div>
+            {% render_field form.birthdate class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+        </div>
+        {% endif %}
+        <button type="submit"
+        class="my-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm block w-full mx-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Change</button>
+        <a href="changepassword.html" class="underline hover:opacity-80">Change your password</a>
+    </form>
+</main>
+
+{% endblock body %}

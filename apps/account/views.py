@@ -5,11 +5,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from .mixins import NoLoginMixin
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, ProfileForm
 from .models import User
+
 
 class RegisterView(NoLoginMixin, View):
     form_class = RegisterForm
+
     def get(self, request):
         form = self.form_class()
         return render(request, "account/register.html",{"form":form})
@@ -55,3 +57,27 @@ class LogoutView(LoginRequiredMixin,View):
         logout(request)
         print('You Logouted')
         return redirect('main:home')
+from django.contrib import messages
+
+
+class UpdateProfileView(LoginRequiredMixin,View):
+    form_class = ProfileForm
+
+    def get(self,request):
+        form = self.form_class(instance=request.user)
+
+        return render(request,"account/profile.html",{"form":form})
+
+    def post(self,request):
+        if request.POST.get('email') != request.user.email:
+            # messages.error(request, "You don't have access to change email.")
+            print("Email changed")
+            return redirect('account:profile')
+        
+        form = self.form_class(data=request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            print("Form updated")
+            return redirect(reverse("main:home"))
+
+        return render(request,"account/profile.html",{"form":form})

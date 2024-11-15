@@ -40,7 +40,7 @@ class CustomUserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    birthdate = models.DateTimeField(null=True)
+    birthdate = models.DateField(null=True)
     full_name = models.CharField(max_length=100, null=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
