@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Add Address{% endblock title %}
+
+{% block body %}
+<main class="flex-grow flex justify-center items-center">
+    <form
+        class="w-11/12 md:w-4/5 lg:w-3/5 xl:w-2/5 mx-auto border p-6 lg:p-8 xl:p-12 border-slate-500 rounded-lg bg-slate-900"
+        method="POST">
+        {% csrf_token %}
+        <h1 class="text-center font-bold text-4xl">Add Address</h1>
+        <hr class="my-8 opacity-40 w-10/12 mx-auto">
+        <div class="relative z-0 w-full mb-5 group">
+        {% if form.errors.title %}
+        {% render_field form.title placeholder=" " class="block py-2.5 px-0 w-full text-sm text-red-900 bg-transparent border-0 border-b-2 border-red-500 appearance-none dark:text-red-500 dark:focus:border-red-500 focus:outline-none focus:ring-0 focus:border-red-600 peer" %}
+        <label for="floating_title"
+        class="peer-focus:font-medium absolute text-sm text-red-500 dark:text-red-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-red-600 peer-focus:dark:text-red-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Title
+        </label>
+        {% for error in form.errors.title %}
+        <p class="text-sm text-red-600 dark:text-red-500"><span class="font-medium">{{ error }}</p>
+        {% endfor %}
+        {% else %}
+        {% render_field form.title placeholder=" " class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" %}
+        <label for="floating_title"
+        class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Title
+        </label>
+        {% endif %}
+        </div>
+        <div class="grid md:grid-cols-2 md:gap-6">
+            <div class="relative z-0 w-full mb-5 group">
+                {% if form.errors.province %}
+                {% render_field form.province placeholder=" " class="block py-2.5 px-0 w-full text-sm text-red-900 bg-transparent border-0 border-b-2 border-red-500 appearance-none dark:text-red-500 dark:focus:border-red-500 focus:outline-none focus:ring-0 focus:border-red-600 peer" %}
+                <label for="floating_province"
+                class="peer-focus:font-medium absolute text-sm text-red-500 dark:text-red-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-red-600 peer-focus:dark:text-red-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Province
+                </label>
+                {% for error in form.errors.province %}
+                <p class="text-sm text-red-600 dark:text-red-500"><span class="font-medium">{{ error }}</p>
+                {% endfor %}
+                {% else %}
+                {% render_field form.province placeholder=" " class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" %}
+                <label for="floating_province"
+                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Province
+                </label>
+                {% endif %}
+            </div>
+            <div class="relative z-0 w-full mb-5 group">
+                {% if form.errors.city %}
+                {% render_field form.city placeholder=" " class="block py-2.5 px-0 w-full text-sm text-red-900 bg-transparent border-0 border-b-2 border-red-500 appearance-none dark:text-red-500 dark:focus:border-red-500 focus:outline-none focus:ring-0 focus:border-red-600 peer" %}
+                <label for="floating_city"
+                class="peer-focus:font-medium absolute text-sm text-red-500 dark:text-red-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-red-600 peer-focus:dark:text-red-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">City
+                </label>
+                {% for error in form.errors.city %}
+                <p class="text-sm text-red-600 dark:text-red-500"><span class="font-medium">{{ error }}</p>
+                {% endfor %}
+                {% else %}
+                {% render_field form.city placeholder=" " class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" %}
+                <label for="floating_city"
+                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">City
+                </label>
+                {% endif %}
+            </div>
+        </div>
+        <div class="grid md:grid-cols-2 md:gap-6">
+        <div class="relative z-0 w-full mb-5 group">
+            {% if form.errors.zipcode %}
+            {% render_field form.zipcode placeholder=" " class="block py-2.5 px-0 w-full text-sm text-red-900 bg-transparent border-0 border-b-2 border-red-500 appearance-none dark:text-red-500 dark:focus:border-red-500 focus:outline-none focus:ring-0 focus:border-red-600 peer" %}
+            <label for="floating_zipcode"
+            class="peer-focus:font-medium absolute text-sm text-red-500 dark:text-red-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-red-600 peer-focus:dark:text-red-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">ZipCode
+            </label>
+            {% for error in form.errors.zipcode %}
+            <p class="text-sm text-red-600 dark:text-red-500"><span class="font-medium">{{ error }}</p>
+            {% endfor %}
+            {% else %}
+            {% render_field form.zipcode placeholder=" " class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" %}
+            <label for="floating_zipcode"
+            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">ZipCode
+            </label>
+            {% endif %}
+        </div>
+        <div class="relative z-0 w-full mb-5 group">
+            {% if form.errors.phone_number %}
+            {% render_field form.phone_number placeholder=" " class="block py-2.5 px-0 w-full text-sm text-red-900 bg-transparent border-0 border-b-2 border-red-500 appearance-none dark:text-red-500 dark:focus:border-red-500 focus:outline-none focus:ring-0 focus:border-red-600 peer" %}
+            <label for="floating_phone_number"
+            class="peer-focus:font-medium absolute text-sm text-red-500 dark:text-red-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-red-600 peer-focus:dark:text-red-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone Number
+            </label>
+            {% for error in form.errors.phone_number %}
+            <p class="text-sm text-red-600 dark:text-red-500"><span class="font-medium">{{ error }}</p>
+            {% endfor %}
+            {% else %}
+            {% render_field form.phone_number placeholder=" " class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" %}
+            <label for="floating_phone_number"
+            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone Number
+            </label>
+            {% endif %}
+        </div>
+        </div>
+        <div class="relative z-0 w-full mb-5 group">
+        {% if form.errors.postal_address %}
+        {% render_field form.postal_address rows="4" class="block p-2.5 w-full text-sm text-red-500 bg-gray-50 rounded-lg border border-red-500 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:border-red-600 dark:placeholder-red-400 dark:text-red-500 dark:focus:ring-red-500 dark:focus:border-red-500" placeholder="Postal Address" style="resize: none;" %}
+        {% for error in form.errors.postal_address %}
+        <p class="text-sm text-red-600 dark:text-red-500"><span class="font-medium">{{ error }}</p>
+        {% endfor %}
+        {% else %}
+        {% render_field form.postal_address rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Postal Address" style="resize: none;" %}
+        {% endif %}
+        </div>
+        <button type="submit"
+        class="my-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm block w-full mx-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add</button>
+    </form>
+</main>
+{% endblock body %}

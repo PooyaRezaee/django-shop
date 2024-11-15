@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %} Addresses {% endblock title %}
+
+{% block body %}
+<main class="flex-grow flex-col justify-center items-center">
+<form class="mt-12">
+    <ul class="mx-auto w-11/12 space-y-4">
+        {% for address in addresses %}
+        <li class="flex items-center">
+            <div class="w-full">
+            <input type="radio" id="address_{{ address.pk }}" name="defualt_address" value="{{ address.pk }}" class="hidden peer" required {% if address.default_for %}checked{% endif %} />
+            <label for="address_{{ address.pk }}" class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
+                <div class="block">
+                    <div class="w-full text-lg font-semibold">{{ address.title }}</div>
+                    <div class="w-full">{{ address.postal_address }}</div>
+                    <div class="flex items-center">
+                        <div class="">{{ address.zipcode }}</div>
+                        <div class="ms-12">{{ address.phone_number }}</div>
+                    </div>
+                </div>
+            </label>
+            </div>
+            <div class="flex flex-col md:flex-row items-center justify-center ms-1">
+                <a href="{% url "account:address-update" address.pk %}" class="w-full text-center block md:ms-4 p-2 md:p-3  bg-cyan-700">Edit</a>
+                <a href="{% url "account:address-delete" address.pk %}" class="w-full text-center block mt-1 md:mt-0 md:ms-4 p-2 md:p-3  bg-rose-700">Delete</a>
+            </div>
+        </li>
+        {% empty %}
+        <h2 class="text-center font-bold text-2xl border p-3 rounded border-red-300 text-red-400">You don't have address</h2>
+        {% endfor %}
+        <a href="{% url "account:address-add" %}" class="block w-full p-2 bg-gray-800 text-white text-center hover:text-gray-100 hover:bg-gray-900 shadow-md border border-gray-400 border-opacity-50 rounded-md">Add new address</a>
+        <button type="submit"
+            class="my-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm block w-full mx-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Set defualt</button>
+    </ul>
+</form>
+</main>
+{% endblock body %}
