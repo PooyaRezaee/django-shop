@@ -1,5 +1,7 @@
+import string
 from django.core.validators import RegexValidator
 from django import forms
+from django.forms import ValidationError
 from .models import User, Addresses
 
 
@@ -83,6 +85,25 @@ class ProfileForm(forms.ModelForm):
         fields = ("email", "full_name", "birthdate", "phone_number")
 
 
+class ChangePasswordForm(forms.Form):
+    password1 = forms.CharField(
+        widget=forms.PasswordInput()
+    )
+    password2 = forms.CharField(widget=forms.PasswordInput())
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data["password1"]
+        confirm_password = cleaned_data["password2"]
+        if not password and not confirm_password:
+            raise ValidationError("you must fill password and confirm password.")
+        if password != confirm_password:
+            raise ValidationError("password and confirm password not match.")
+        
+        if len(password) < 6:
+            raise ValidationError("Password Must be longer.")
+
+
 class AddressForm(forms.ModelForm):
 
     phone_regex = RegexValidator(regex=r"^\d{11}$", message="Enter valid phone number.")
@@ -91,7 +112,6 @@ class AddressForm(forms.ModelForm):
         max_length=12,
         help_text="example: 09123456789",
     )
-
 
     class Meta:
         model = Addresses
@@ -103,4 +123,3 @@ class AddressForm(forms.ModelForm):
             "phone_number",
             "zipcode",
         )
-

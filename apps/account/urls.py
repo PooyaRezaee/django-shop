@@ -8,6 +8,7 @@ from .views import (
     AddresseListView,
     AddressDeleteView,
     AddresseUpdateView,
+    ChangePasswordView,
 )
 
 
@@ -15,6 +16,7 @@ urlpatterns = [
     path("login/", CustomLoginView.as_view(), name="login"),
     path("register/", RegisterView.as_view(), name="register"),
     path("logout/", LogoutView.as_view(), name="logout"),
+    path("password/change/", ChangePasswordView.as_view(), name="password-change"),
     path("profile/", UpdateProfileView.as_view(), name="profile"),
     path("address/list/", AddresseListView.as_view(), name="address-list"),
     path("address/delete/<int:pk>/", AddressDeleteView.as_view(), name="address-delete"),
