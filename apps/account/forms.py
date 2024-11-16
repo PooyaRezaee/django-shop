@@ -103,6 +103,15 @@ class ChangePasswordForm(forms.Form):
         if len(password) < 6:
             raise ValidationError("Password Must be longer.")
 
+from django import forms
+
+class RequestResetPasswordForm(forms.Form):
+    email = forms.EmailField()
+
+
+class SetPasswordForm(ChangePasswordForm):
+    token = forms.CharField(widget=forms.HiddenInput())
+    uidb64 = forms.CharField(widget=forms.HiddenInput())
 
 class AddressForm(forms.ModelForm):
 

@@ -1,14 +1,13 @@
-from email.policy import default
-import uuid
-from django.db import models, IntegrityError
-from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
 )
-from django.core.exceptions import ValidationError
-
+from django import utils
+from django.conf import settings
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.urls import reverse
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **kwargs):
@@ -58,6 +57,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_staff(self):
         return self.is_admin
+    
+    def get_password_reset_url(self):
+        base64_encoded_id = utils.http.urlsafe_base64_encode(utils.encoding.force_bytes(self.id))
+        token = PasswordResetTokenGenerator().make_token(self)
+        reset_url_args = {'uidb64': base64_encoded_id, 'token': token}
+        reset_path = reverse('account:password-reset', kwargs=reset_url_args)
+        reset_url = f'{settings.BASE_URL}{reset_path}'
+        return reset_url
 
 
 class Addresses(models.Model):

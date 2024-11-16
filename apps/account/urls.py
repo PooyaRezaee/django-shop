@@ -9,6 +9,8 @@ from .views import (
     AddressDeleteView,
     AddresseUpdateView,
     ChangePasswordView,
+    ResetPasswordView,
+    RequestResetPasswordView,
 )
 
 
@@ -17,6 +19,8 @@ urlpatterns = [
     path("register/", RegisterView.as_view(), name="register"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("password/change/", ChangePasswordView.as_view(), name="password-change"),
+    path("password/reset/request/", RequestResetPasswordView.as_view(), name="password-request-reset"),
+    path("password/reset/<str:uidb64>/<str:token>/", ResetPasswordView.as_view(), name="password-reset"),
     path("profile/", UpdateProfileView.as_view(), name="profile"),
     path("address/list/", AddresseListView.as_view(), name="address-list"),
     path("address/delete/<int:pk>/", AddressDeleteView.as_view(), name="address-delete"),
