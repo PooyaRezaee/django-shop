@@ -1,3 +1,5 @@
+from django.db.models.base import Model as Model
+from django.db.models.query import QuerySet
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.http import Http404
@@ -235,7 +237,8 @@ class AddresseUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("account:address-list")
     template_name = "address/update.html"
 
-    # check is owner or no
+    def get_queryset(self):
+        return self.model.objects.filter(user=self.request.user)
 
 
 class AddressDeleteView(LoginRequiredMixin, View):
