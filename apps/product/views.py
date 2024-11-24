@@ -1,5 +1,3 @@
-from django.shortcuts import render
-from django.views import View
 from django.views.generic import ListView, DetailView
 from django.db.models import Avg,Count, F, ExpressionWrapper, FloatField
 from .models import Category, Product
@@ -91,4 +89,15 @@ class ProductListView(ListView):
 class ProductDetailView(DetailView):
     template_name = "product/detail.html"
     model = Product
+    loop_rating = range(1,6)
     context_object_name = "product"
+        
+    def get_queryset(self):
+        queryset = self.model.objects.filter(is_active=True).annotate(average_score=Avg("comments__score")).prefetch_related("comments")
+
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["loop_rating"] = self.loop_rating
+        return context
