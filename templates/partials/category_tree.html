@@ -1,0 +1,33 @@
+<ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+    {% for category in categories %}
+        <li>
+            {% if category.childs.exists %}
+            <div class="flex">
+                <a href="{% url "product:list" %}?category={{ category.name }}"
+                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                style="width:100%">
+                    {{ category.name }}
+                </a>
+                <button id="bbdropdown-{{ category.id }}" 
+                        data-dropdown-toggle="dropdown-{{ category.id }}" 
+                        data-dropdown-placement="right-start"
+                        class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                        style="width:20%;">
+                    <svg class=rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
+                    </svg>
+                </button>
+            </div>
+            <div id="dropdown-{{ category.id }}" 
+                    class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700" aria-hidden="true" data-popper-placement="right-start">
+                {% include "partials/category_tree.html" with categories=category.childs.all %}
+            </div>
+            {% else %}
+            <a href="{% url "product:list" %}?category={{ category.name }}"
+                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                {{ category.name }}
+            </a>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
