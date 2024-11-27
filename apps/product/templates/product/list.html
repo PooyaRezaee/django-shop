@@ -95,9 +95,13 @@
                 <a href="{% url "product:list" %}?category={{ product.category.name }}" class="me-2 rounded bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-800 dark:bg-primary-900 dark:text-primary-300">{{ product.category.name }}</a>
     
                 <div class="flex items-center justify-end gap-1">
-                <button id="product-1" onclick="remove_favorites(this)" type="button" data-tooltip-target="tooltip-add-to-favorites" class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                <button id="product-{{ product.slug }}" onclick="{% if request.user in product.likes.all %}remove_favorites(this){% else %}add_favorites(this){% endif %} " type="button" data-tooltip-target="tooltip-add-to-favorites" class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                     <span class="sr-only"> Add to Favorites </span>
+                    {% if request.user in product.likes.all %}
                     <svg class="w-5 h-5 text-rose-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                    {% else %}
+                    <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6C6.5 1 1 8 5.8 13l6.2 7 6.2-7C23 8 17.5 1 12 6Z" /></svg>
+                    {% endif %}
                     <path d="m12.75 20.66 6.184-7.098c2.677-2.884 2.559-6.506.754-8.705-.898-1.095-2.206-1.816-3.72-1.855-1.293-.034-2.652.43-3.963 1.442-1.315-1.012-2.678-1.476-3.973-1.442-1.515.04-2.825.76-3.724 1.855-1.806 2.201-1.915 5.823.772 8.706l6.183 7.097c.19.216.46.34.743.34a.985.985 0 0 0 .743-.34Z"/>
                     </svg>    
                 </button>
@@ -357,3 +361,80 @@
 </main>
 
 {% endblock body %}
+
+{% block script-section %}
+<script>
+    svg_liked = '<svg class="w-5 h-5 text-rose-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="m12.75 20.66 6.184-7.098c2.677-2.884 2.559-6.506.754-8.705-.898-1.095-2.206-1.816-3.72-1.855-1.293-.034-2.652.43-3.963 1.442-1.315-1.012-2.678-1.476-3.973-1.442-1.515.04-2.825.76-3.724 1.855-1.806 2.201-1.915 5.823.772 8.706l6.183 7.097c.19.216.46.34.743.34a.985.985 0 0 0 .743-.34Z"/></svg>';
+    svg_unlikd = '<svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6C6.5 1 1 8 5.8 13l6.2 7 6.2-7C23 8 17.5 1 12 6Z" /></svg>'
+    function remove_favorites(button) {
+        button.setAttribute('onclick', 'add_favorites(this)');
+
+        button.innerHTML = svg_unlikd;
+        const buttonId = button.id;
+        productId = buttonId.split('-').slice(1).join('-');
+        unlikeProduct(productId);
+        console.log(`product ${productId} unliked`);
+    }
+
+    function add_favorites(button) {
+        button.setAttribute('onclick', 'remove_favorites(this)');
+
+        button.innerHTML = svg_liked;
+        const buttonId = button.id;
+        productId = buttonId.split('-').slice(1).join('-');
+        likeProduct(productId);
+        console.log(`product ${productId} liked`);
+    }
+
+    function likeProduct(productSlug) {
+        fetch(`/api/products/${productSlug}/like/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+        })
+        .then((response) => {
+            if (response.ok) {
+            } else {
+                throw new Error("Failed to like the product");
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    }
+
+    function unlikeProduct(productSlug) {
+        fetch(`/api/products/${productSlug}/like/`, {
+            method: "DELETE",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+        })
+        .then((response) => {
+            if (response.ok) {
+            } else {
+                throw new Error("Failed to unlike the product");
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock script-section %}

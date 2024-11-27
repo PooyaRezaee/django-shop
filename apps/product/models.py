@@ -46,7 +46,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10,decimal_places=2, db_index=True)
     price_after_discount = models.DecimalField(max_digits=10,decimal_places=2, blank=True,null=True)
     stock = models.PositiveIntegerField(default=0)
-    likes = models.ManyToManyField("account.User", blank=True)
+    likes = models.ManyToManyField("account.User", blank=True, related_name="products_liked")
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, related_name="products", null=True)
     is_active = models.BooleanField(default=True)
 
@@ -61,6 +61,7 @@ class Product(models.Model):
     def __str__(self):
         return self.name
     
+    @property
     def get_absolute_url(self):
         return reverse("product:detail", kwargs={"pk": self.id})
     

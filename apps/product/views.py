@@ -1,5 +1,6 @@
 from django.views.generic import ListView, DetailView
 from django.db.models import Avg,Count, F, ExpressionWrapper, FloatField
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Category, Product
 
 
@@ -84,6 +85,13 @@ class ProductListView(ListView):
         context["last_index_breadcrumb"] = self.last_index_breadcrumb
         context["loop_rating"] = self.loop_rating
         return context
+
+
+class FavaritesProductListView(LoginRequiredMixin,ProductListView):
+    template_name = "product/favourites.html"
+    
+    def get_queryset(self):
+        return self.request.user.products_liked.all().annotate(average_score=Avg("comments__score"))
 
 
 class ProductDetailView(DetailView):

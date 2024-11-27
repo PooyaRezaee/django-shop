@@ -59,7 +59,7 @@
                   id="add_favorites"
                   onclick="add_favorites()"
                   title=""
-                  class="flex items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                  class="{% if request.user in product.likes.all %}hidden{% endif %} flex items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                   role="button"
                 >
                   <svg
@@ -85,7 +85,7 @@
                   id="remove_favorites"
                   onclick="remove_favorites()"
                   title=""
-                  class="hidden items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-400 dark:border-gray-600 dark:text-white dark:bg-gray-700"
+                  class="{% if request.user not in product.likes.all %}hidden{% else %}flex{% endif %} items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-400 dark:border-gray-600 dark:text-white dark:bg-gray-700"
                   role="button"
                 >
                   <svg class="w-5 h-5 -ms-2 me-2 text-rose-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -234,14 +234,70 @@
 <script>
 let like_element = document.getElementById("add_favorites");
 let liked_element = document.getElementById("remove_favorites");
+let product_slug = "{{ product.slug }}";
+
 function remove_favorites() {
-like_element.style.display = "flex";
-liked_element.style.display = "none";
+  unlikeProduct(product_slug);
+  like_element.style.display = "flex";
+  liked_element.style.display = "none";
 }
 function add_favorites() {
-like_element.style.display = "none";
-liked_element.style.display = "flex";
+  likeProduct(product_slug);
+  like_element.style.display = "none";
+  liked_element.style.display = "flex";
 }
+
+function likeProduct(productSlug) {
+  fetch(`/api/products/${productSlug}/like/`, {
+      method: "POST",
+      headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+      },
+  })
+  .then((response) => {
+      if (response.ok) {
+      } else {
+          throw new Error("Failed to like the product");
+      }
+  })
+  .catch((error) => {
+      console.error(error);
+  });
+}
+
+function unlikeProduct(productSlug) {
+  fetch(`/api/products/${productSlug}/like/`, {
+      method: "DELETE",
+      headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+      },
+  })
+  .then((response) => {
+      if (response.ok) {
+      } else {
+          throw new Error("Failed to unlike the product");
+      }
+  })
+  .catch((error) => {
+      console.error(error);
+  });
+}
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.startsWith(name + "=")) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
+
 // function add_to_cart() {
 
 // }
