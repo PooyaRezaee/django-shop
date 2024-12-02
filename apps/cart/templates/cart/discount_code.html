@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Discount Codes{% endblock title %}
+
+{% block body %}
+<main class="flex-grow flex flex-col justify-center items-center pb-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-screen-md w-11/12 md:w-full">
+        {% for code in codes %}
+        <div class="p-4 bg-gray-800 rounded-lg shadow-md">
+            <p class="mt-2 text-gray-50 text-center">
+            Thanks for assist us 
+        </p>
+            <input type="text" readonly aria-describedby="helper-text-explanation" class="my-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 font-bold dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-center" value="{{ code.code }}" onclick="copyCode('{{ code.code }}')">
+            <div class="flex items-center justify-between ">
+                <p class="text-yellow-200 text-sm flex flex-col items-center opacity-70">
+                    <span>MinimumCard</span>
+                    <span>{{ code.minimum_order_price }}$</span>
+                </p>
+                <p class="text-green-300 text-md flex flex-col items-center">
+                    <span>DiscountPrice</span>
+                    <span>{{ code.discount_price }}$</span>
+                </p>
+                <p class="text-red-200 text-sm flex flex-col items-center opacity-70">
+                    <span>Expire at</span>
+                    <span>{{ code.expire_at }}</span>
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock body %}
+
+{% block script-section %}
+<script>
+    function copyCode(code) {
+        navigator.clipboard.writeText(code)
+    }
+</script>
+{% endblock script-section %}
