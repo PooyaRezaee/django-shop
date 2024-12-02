@@ -185,6 +185,9 @@ class ResetPasswordView(View):
             except (TypeError, ValueError, OverflowError, User.DoesNotExist):
                 messages.error(request, "An error occurred.")
 
+        messages.error(request, "Form not valid.")
+        for field, error in form.errors.items():
+            messages.warning(request, str(error))
         return render(request, self.template_name, {"form": form})
 
 
