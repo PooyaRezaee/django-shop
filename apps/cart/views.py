@@ -1,10 +1,13 @@
+import uuid
 from django.shortcuts import render, redirect
 from django.views import View
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView,DetailView
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.db import transaction
 from apps.product.models import Product
-from .models import DiscountCode
+from .models import DiscountCode,OrderItem,Order,Cart
 from .utils import add_product_to_cart, reduce_product_from_cart
 
 
@@ -64,5 +67,58 @@ class RemoveFromCartView(LoginRequiredMixin, TemplateView):
         return redirect("cart:checkout")
 
 
-class PaymentView(View):
-    pass
+class PaymentView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = request.user
+        cart = user.cart
+        
+        if not cart.items.exists():
+            messages.warning(request, "You don't have item in cart")
+            return redirect("main:home")
+        
+        total, total_after_discount, discount_product, discount_code = cart.total_price
+        
+        with transaction.atomic():
+            order = Order.objects.create(
+                user=user,
+                customer_code=uuid.uuid4(),
+                discount_price=discount_product + discount_code,
+                status="P",
+                discount_code=cart.discount_code,
+            )
+
+            order_items = [
+                OrderItem(
+                    order=order,
+                    product=item.product,
+                    quantity=item.quantity,
+                    price=item.product.price
+                )
+                for item in cart.items.all()
+            ]
+
+            OrderItem.objects.bulk_create(order_items)
+            
+            cart.delete()
+            Cart.objects.create(user=user)
+
+        messages.success(request,"Successfully completed.")
+        return redirect("main:home")
+    
+
+class UserOrderListView(LoginRequiredMixin, ListView):
+    model = Order
+    template_name = "cart/orders.html" 
+    context_object_name = "orders"
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user).select_related("user")
+
+
+class OrderDetailView(DetailView):
+    model = Order
+    template_name = "cart/order.html"
+    context_object_name = "order"
+
+    def get_object(self):
+        return get_object_or_404(Order, pk=self.kwargs["order_id"], user=self.request.user)
