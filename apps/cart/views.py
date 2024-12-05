@@ -17,6 +17,26 @@ class DiscountListView(ListView):
 class CartView(LoginRequiredMixin, TemplateView):
     template_name = "cart/checkout.html"
 
+    def post(self, request):
+        code = request.POST.get("code")
+        applied = None
+        context = {}
+        cart = self.request.user.cart
+        if code:
+            if DiscountCode.objects.filter(code=code).exists():
+                code_obj = DiscountCode.objects.get(code=code)
+                applied = "yes" if cart.apply_discount_code(code_obj) else "no"
+            else:
+                applied = "no"
+        
+        if applied == "no" and cart.discount_code:
+            cart.discount_code = None
+            cart.save()
+            
+        context["applied"] = applied
+        context["code"] = code
+        return render(request, self.template_name, context)
+
 
 class AddToCartView(LoginRequiredMixin, TemplateView):
     def get(self, request, product_slug, *args, **kwargs):
@@ -42,11 +62,6 @@ class RemoveFromCartView(LoginRequiredMixin, TemplateView):
         except ValueError as e:
             messages.warning(request, str(e))
         return redirect("cart:checkout")
-
-
-class CheckOutView(View):
-    def get(self, request):
-        pass
 
 
 class PaymentView(View):

@@ -1,6 +1,6 @@
 import uuid
 from django.db import models
-
+from django.utils import timezone
 
 class CartItem(models.Model):
     cart = models.ForeignKey("Cart", related_name="items", on_delete=models.CASCADE, db_index=True)
@@ -105,12 +105,34 @@ class Cart(models.Model):
             else:
                 total_after_discount += item.product.price * quantity
 
-        discount = total - total_after_discount
-
+        discount_product = total - total_after_discount
+        
         if self.discount_code:
-            pass
+            discount_code = self.discount_code.discount_price
+            total_after_discount -= discount_code
+        else:
+            discount_code = 0
 
-        return total, total_after_discount, discount
+        return total, total_after_discount, discount_product, discount_code
+
+    def check_validation_discount_code(self):
+        if self.discount_code.minimum_order_price > self.total_price[1]:
+            return False
+
+        if self.discount_code.expire_at >= timezone.now():
+            return False
+
+        return True
+
+    def apply_discount_code(self, code) -> bool:
+        # code; DiscountCode
+        self.discount_code = code
+
+        if not self.check_validation_discount_code():
+            return False
+
+        self.save()
+        return True
 
     class Meta:
         verbose_name = "Cart"

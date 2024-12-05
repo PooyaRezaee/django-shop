@@ -63,13 +63,14 @@
     <!-- Discount Code & Checkout Section -->
     <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Discount Code Section -->
-        <div class="bg-gray-950 p-6 rounded-lg shadow-md">
+        <form method="POST" class="bg-gray-950 p-6 rounded-lg shadow-md">
+            {% csrf_token %}
             <h3 class="text-xl font-semibold mb-4">Discount Code</h3>
-            <input type="text" placeholder="Enter discount code" class="w-full bg-gray-600 placeholder-gray-200 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <button class="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                Apply Code
+            <input value="{% if code %}{{ code }}{% else %}{% if cart.discount_code %}{{ cart.discount_code.code }}{% endif %}{% endif %}" type="text" name="code" placeholder="Enter discount code" class="w-full bg-gray-600 placeholder-gray-200 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="submit" class="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Apply Code {% if applied == "yes" %}(<span class="text-green-400">code applied</span>){% elif applied == "no" %}(<span class="dark:text-red-300">code not valid</span>){% endif %}
             </button>
-        </div>
+        </form>
 
         <!-- Summary & Checkout -->
         <div class="bg-gray-950 p-6 rounded-lg shadow-md">
@@ -80,7 +81,11 @@
                 <span data-total>${{ prices.0 }}</span>
             </div>
             <div class="flex justify-between items-center mt-2">
-                <span>Discount</span>
+                <span>Discount Code</span>
+                <span data-discount-code>{{ cart.discount_code.code }} -${{ prices.3 }}</span>
+            </div>
+            <div class="flex justify-between items-center mt-2">
+                <span>Discount Product</span>
                 <span data-discount>-${{ prices.2 }}</span>
             </div>
             <div class="flex justify-between items-center mt-2 font-semibold">

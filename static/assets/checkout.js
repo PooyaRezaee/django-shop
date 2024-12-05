@@ -78,8 +78,9 @@ async function ReduceCartItem(slug) {
 
 function calculateOrderTotal() {
     const rows = document.querySelectorAll('tbody tr');
+    const discountCodePrice = parseFloat(document.querySelector('[data-discount-code]').textContent.replace('$', '')) * -1
     let totalOriginalPrice = 0;
-    let totalDiscountedPrice = 0;
+    let totalDiscountedPrice = discountCodePrice * -1;
     
     rows.forEach(row => {
         const priceElements = row.querySelector('td:nth-child(2)').querySelectorAll('span');
@@ -97,8 +98,7 @@ function calculateOrderTotal() {
         
         totalDiscountedPrice += price * quantity;
     });
-    
-    const discountAmount = totalOriginalPrice - totalDiscountedPrice;
+    const discountAmount = totalOriginalPrice - totalDiscountedPrice - discountCodePrice;
     
     document.querySelector('[data-total]').textContent = `$${totalOriginalPrice.toFixed(2)}`;
     document.querySelector('[data-discount]').textContent = `-$${discountAmount.toFixed(2)}`;
