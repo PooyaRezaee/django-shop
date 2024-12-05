@@ -1,3 +1,6 @@
+from typing import Any
+from django.db.models.base import Model as Model
+from django.db.models.query import QuerySet
 from django.views.generic import ListView, DetailView
 from django.db.models import Avg,Count, F, ExpressionWrapper, FloatField
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -99,13 +102,19 @@ class ProductDetailView(DetailView):
     model = Product
     loop_rating = range(1,6)
     context_object_name = "product"
+    slug_field = "slug"
         
     def get_queryset(self):
         queryset = self.model.objects.filter(is_active=True).annotate(average_score=Avg("comments__score")).prefetch_related("comments")
-
         return queryset
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            if self.request.user.cart.items.filter(product=self.object).exists():
+                context["quantity"] = self.request.user.cart.items.get(product=self.object).quantity
+            else:
+                context["quantity"] = 0
+        
         context["loop_rating"] = self.loop_rating
         return context

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cart, Order, ProductPack, DiscountCode
+from .models import Cart, Order, CartItem, OrderItem, DiscountCode
 
 
 @admin.register(Cart)
@@ -12,10 +12,14 @@ class OrderAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(ProductPack)
-class CartAdmin(admin.ModelAdmin):
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
     pass
 
+
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    pass
 
 @admin.register(DiscountCode)
 class CartAdmin(admin.ModelAdmin):

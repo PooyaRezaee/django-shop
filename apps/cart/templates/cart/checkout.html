@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}CheckOut{% endblock title %}
+
+{% block body %}
+<main class="flex-grow flex justify-center items-center">
+    {% csrf_token %}
+    <!-- Cart Page Container -->
+    <div class="container mx-auto my-10 p-6 bg-gray-800 rounded-lg shadow-lg">
+    <h2 class="text-3xl font-bold mb-6 text-center">Shopping Cart</h2>
+
+    <!-- Cart Items Section -->
+    <div class="overflow-auto">
+        <table class="min-w-full bg-gray-800 border border-gray-600 rounded-lg">
+            <thead>
+                <tr>
+                    <th class="py-3 px-4 border-b border-gray-600 text-left font-semibold text-gray-100">Product</th>
+                    <th class="py-3 px-4 border-b border-gray-600 text-left font-semibold text-gray-100">Price</th>
+                    <th class="py-3 px-4 border-b border-gray-600 text-left font-semibold text-gray-100">Quantity</th>
+                    <th class="py-3 px-4 border-b border-gray-600 text-left font-semibold text-gray-100">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr data-product-slug="{{ item.product.slug }}">
+                    <td class="py-4 px-4 border-b border-gray-600">
+                        <div class="flex items-center space-x-4 flex-wrap ">
+                            <img class="w-24 rounded-md" src="{{ item.product.image.url }}" alt="{{ item.product.slug }}" />
+                            <span>{{ item.product.name }}</span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4 border-b border-gray-600">
+                        {% if item.product.price_after_discount %}
+                        <span class="line-through text-sm">${{ item.product.price }}</span>
+                        <span>${{ item.product.price_after_discount }}</span>
+                        {% else %}
+                        <span>${{ item.product.price }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-4 px-4 border-b border-gray-600">
+                        <div class="relative flex items-center justify-start">
+                            <button type="button" id="decrement-button" data-input-counter-decrement="counter-input-{{ item.product.slug }}" class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                                <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                                </svg>
+                            </button>
+                            <input type="text" id="counter-input-{{ item.product.slug }}" data-input-counter class="flex-shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center" placeholder="" value="{{ item.quantity }}" required />
+                            <button type="button" id="increment-button" data-input-counter-increment="counter-input-{{ item.product.slug }}" class="flex-shrink-0 bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 inline-flex items-center justify-center border border-gray-300 rounded-md h-5 w-5 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                                <svg class="w-2.5 h-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4 border-b border-gray-600" data-total-price data-product-slug="{{ item.product.slug }}">${{ item.total_price_after_discount }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Discount Code & Checkout Section -->
+    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Discount Code Section -->
+        <div class="bg-gray-950 p-6 rounded-lg shadow-md">
+            <h3 class="text-xl font-semibold mb-4">Discount Code</h3>
+            <input type="text" placeholder="Enter discount code" class="w-full bg-gray-600 placeholder-gray-200 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button class="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Apply Code
+            </button>
+        </div>
+
+        <!-- Summary & Checkout -->
+        <div class="bg-gray-950 p-6 rounded-lg shadow-md">
+            <h3 class="text-xl font-semibold mb-4">Order Summary</h3>
+            {% with prices=cart.total_price %}
+            <div class="flex justify-between items-center">
+                <span>total</span>
+                <span data-total>${{ prices.0 }}</span>
+            </div>
+            <div class="flex justify-between items-center mt-2">
+                <span>Discount</span>
+                <span data-discount>-${{ prices.2 }}</span>
+            </div>
+            <div class="flex justify-between items-center mt-2 font-semibold">
+                <span>Payable</span>
+                <span data-payable>${{ prices.1 }}</span>
+            </div>
+            {% endwith %}
+            <button class="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Proceed to Payment
+            </button>
+        </div>
+    </div>
+</div>  
+</main>
+{% endblock body %}
+
+{% block script-section %}
+<script src="{% static 'assets/checkout.js' %}"></script>
+{% endblock script-section %}

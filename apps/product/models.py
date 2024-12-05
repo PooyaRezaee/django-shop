@@ -60,10 +60,11 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
     
     @property
     def get_absolute_url(self):
-        return reverse("product:detail", kwargs={"pk": self.id})
+        return reverse("product:detail", kwargs={"slug": self.slug})
     
     @property
     def discount_percentage(self):
