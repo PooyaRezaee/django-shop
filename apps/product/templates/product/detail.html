@@ -177,13 +177,13 @@
             <div class="flex justify-between items-center mb-6">
               <h2 class="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Comments ({{ product.comments.count }})</h2>
           </div>
-          <form class="mb-6" id="comment-form">
-            
+          <form method="POST" class="mb-6" id="comment-form">
+            {% csrf_token %}
             <input type="hidden" name="rating" id="rating-value">
             
             <div class="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
               <label for="comment" class="sr-only">Your comment</label>
-              <textarea id="comment" rows="6" class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800" placeholder="Write a comment..." required></textarea>
+              <textarea name="comment" id="comment" rows="6" class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800" placeholder="Write a comment..." required></textarea>
             </div>
             <div class="flex items-center space-x-1 my-5">
                 <button type="button" class="star-button" data-star="1">
@@ -450,25 +450,26 @@ star.addEventListener('click', () => {
 });
 
 document.getElementById('comment-form').addEventListener('submit', (e) => {
-e.preventDefault();
-
-const comment = document.getElementById('comment').value;
-const rating = ratingValue.value;
-
-if (!rating) {
+  
+  const comment = document.getElementById('comment').value;
+  const rating = ratingValue.value;
+  
+  if (!rating) {
+    e.preventDefault();
     alert('Please select a rating!');
     return;
-}
-
-if (!comment) {
+  }
+  
+  if (!comment) {
+    e.preventDefault();
     alert('Please write a comment!');
     return;
-}
+  }
 
-const formData = new FormData();
-formData.append('rating', rating);
-formData.append('comment', comment);
+  const formData = new FormData();
+  formData.append('rating', rating);
+  formData.append('comment', comment);
 
-});
+  });
 </script>
 {% endblock script-section %}

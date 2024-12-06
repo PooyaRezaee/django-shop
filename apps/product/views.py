@@ -1,10 +1,9 @@
-from typing import Any
-from django.db.models.base import Model as Model
-from django.db.models.query import QuerySet
+from django.shortcuts import redirect
+from django.contrib import messages
 from django.views.generic import ListView, DetailView
 from django.db.models import Avg,Count, F, ExpressionWrapper, FloatField
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Category, Product
+from .models import Category, Product, Comment
 
 
 class ProductListView(ListView):
@@ -118,3 +117,26 @@ class ProductDetailView(DetailView):
         
         context["loop_rating"] = self.loop_rating
         return context
+
+    def post(self, request, *args, **kwargs):
+        product = self.get_object()
+        user = request.user
+        rating = request.POST.get('rating')
+        comment_text = request.POST.get('comment')
+
+        if not request.user.is_authenticated:
+            messages.error(request, "You need to be logged in to leave a comment.")
+            return redirect("account:login")
+
+        if rating and comment_text:
+            messages.success(request, "Comment added.")
+            Comment.objects.create(
+                product=product,
+                user=user,
+                comment=comment_text,
+                score=rating
+            )
+        else:
+            messages.error(request, "Please provide both rating and comment.")
+
+        return redirect(request.path)
