@@ -76,6 +76,12 @@ class PaymentView(LoginRequiredMixin, View):
             messages.warning(request, "You don't have item in cart")
             return redirect("main:home")
         
+        if not user.default_address:
+            messages.warning(request, "Add and set defualt address")
+            return redirect("account:address-list")
+        
+        address = user.default_address
+
         total, total_after_discount, discount_product, discount_code = cart.total_price
         
         with transaction.atomic():
@@ -85,6 +91,7 @@ class PaymentView(LoginRequiredMixin, View):
                 discount_price=discount_product + discount_code,
                 status="P",
                 discount_code=cart.discount_code,
+                address=address,
             )
 
             order_items = [
@@ -92,7 +99,7 @@ class PaymentView(LoginRequiredMixin, View):
                     order=order,
                     product=item.product,
                     quantity=item.quantity,
-                    price=item.product.price
+                    price=item.product.price,
                 )
                 for item in cart.items.all()
             ]

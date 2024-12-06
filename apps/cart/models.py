@@ -2,8 +2,11 @@ import uuid
 from django.db import models
 from django.utils import timezone
 
+
 class CartItem(models.Model):
-    cart = models.ForeignKey("Cart", related_name="items", on_delete=models.CASCADE, db_index=True)
+    cart = models.ForeignKey(
+        "Cart", related_name="items", on_delete=models.CASCADE, db_index=True
+    )
     product = models.ForeignKey("product.Product", on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -27,7 +30,7 @@ class CartItem(models.Model):
         verbose_name = "Cart Item"
         verbose_name_plural = "Cart Items"
         ordering = ["cart", "product"]
-        unique_together = ('cart', 'product')
+        unique_together = ("cart", "product")
 
 
 class OrderItem(models.Model):
@@ -38,7 +41,6 @@ class OrderItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    
     @property
     def total_price(self):
         return self.price * self.quantity
@@ -63,9 +65,12 @@ class Order(models.Model):
     )
     customer_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    status = models.CharField(max_length=2, choices=STATUS,default="W")
+    status = models.CharField(max_length=2, choices=STATUS, default="W")
     discount_code = models.ForeignKey(
         "DiscountCode", on_delete=models.SET_NULL, related_name="orders", null=True
+    )
+    address = models.ForeignKey(
+        "account.Addresses", null=True, on_delete=models.SET_NULL, related_name="orders"
     )
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -111,7 +116,7 @@ class Cart(models.Model):
                 total_after_discount += item.product.price * quantity
 
         discount_product = total - total_after_discount
-        
+
         if self.discount_code:
             discount_code = self.discount_code.discount_price
             total_after_discount -= discount_code

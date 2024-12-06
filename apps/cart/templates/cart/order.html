@@ -12,6 +12,7 @@
         <div class="mb-6">
             <p class="text-lg"><span class="font-semibold">Order ID:</span> #{{ order.customer_code }}</p>
             <p class="text-lg"><span class="font-semibold">Date:</span> {{ order.created_at|date:"Y-m-d" }}</p>
+            <p class="text-lg"><span class="font-semibold">Address:</span> {{ order.address.postal_address }}</p>
             <p class="text-lg">
                 <span class="font-semibold">Status:</span>
                 <span class="{% if order.status == 'S' %}text-green-400{% elif order.status == 'P' %}text-yellow-400{% else %}text-red-400{% endif %}">
