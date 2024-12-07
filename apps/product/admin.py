@@ -28,6 +28,7 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ("name", "description")
     ordering = ("-created_at",)
     readonly_fields = ("created_at", "updated_at")
+    prepopulated_fields = {'slug': ('name',), }
 
     def image_display(self, obj):
         if obj.image:

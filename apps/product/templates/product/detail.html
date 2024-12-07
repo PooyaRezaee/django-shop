@@ -2,6 +2,17 @@
 {% load humanize %}
 
 {% block title %}{{ product.name }}{% endblock title %}
+{% block head %}
+<style>
+  #description li {
+    color: white !important;
+  }
+  #description ul {
+    list-style: circle;
+  }
+</style>
+{% endblock head %}
+
 
 {% block body %}
 <main>
@@ -165,9 +176,9 @@
     
               <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
     
-              <p class="mb-6 text-gray-500 dark:text-gray-400">
-                {{ product.description }}
-              </p>
+              <div id="description" class="mb-6">
+                {{ product.description | safe }}
+              </div>
             </div>
           </div>
         </div>

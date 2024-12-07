@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.urls import reverse
+from django_ckeditor_5.fields import CKEditor5Field
+
 
 class Category(models.Model):
     name = models.CharField(max_length=64,unique=True)
@@ -42,7 +44,7 @@ class Product(models.Model):
     name = models.CharField(max_length=256)
     slug = models.SlugField(unique=True, db_index=True)
     image = models.ImageField(upload_to="products/img/")
-    description = models.TextField()
+    description = CKEditor5Field(config_name='extends')
     price = models.DecimalField(max_digits=10,decimal_places=2, db_index=True)
     price_after_discount = models.DecimalField(max_digits=10,decimal_places=2, blank=True,null=True)
     stock = models.PositiveIntegerField(default=0)
