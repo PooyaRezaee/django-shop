@@ -4,8 +4,8 @@ from django.db import transaction
 
 def add_product_to_cart(cart, product, quantity):
     try:
-        if product.stock < quantity:
-            raise ValueError(f"Only {product.stock} items available in stock.")
+        # if product.stock < quantity:
+        #     raise ValueError(f"Only {product.stock} items available in stock.")
 
         with transaction.atomic():
             cart_item, created = CartItem.objects.get_or_create(

@@ -129,7 +129,7 @@ class Cart(models.Model):
         if self.discount_code.minimum_order_price > self.total_price[1]:
             return False
 
-        if self.discount_code.expire_at >= timezone.now():
+        if self.discount_code.expire_at <= timezone.now():
             return False
 
         return True
