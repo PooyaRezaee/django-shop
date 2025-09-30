@@ -12,4 +12,4 @@ class HomeView(View):
             "loop_rating": range(5),
         }
 
-        return render(request, "main\home.html", context)
+        return render(request, "main/home.html", context)

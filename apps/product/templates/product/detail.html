@@ -20,9 +20,9 @@
         <div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
           <div class="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
             <div class="shrink-0 max-w-md lg:max-w-lg mx-auto">
-              <img class="w-full" src="{{ product.image.url }}" alt="" />
+              <img class="w-full" src="{{ product.image.url }}" alt="{{ product.slug }}" />
             </div>
-    
+
             <div class="mt-6 sm:mt-8 lg:mt-0">
               <h1
                 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white"
@@ -274,6 +274,16 @@
 let like_element = document.getElementById("add_favorites");
 let liked_element = document.getElementById("remove_favorites");
 let product_slug = "{{ product.slug }}";
+let cartItem = `cartItem{{ product.slug }}`;
+
+const productData = {
+    name: "{{ product.name|escapejs }}",
+    slug: "{{ product.slug }}",
+    url: "{{ product.get_absolute_url }}",
+    price: "{{ product.price }}",
+    price_after_discount: "{{ product.price_after_discount|default:'' }}",
+};
+
 
 function remove_favorites() {
   unlikeProduct(product_slug);
@@ -294,8 +304,7 @@ function likeProduct(productSlug) {
       },
   })
   .then((response) => {
-      if (response.ok) {
-      } else {
+      if (!response.ok) {
           throw new Error("Failed to like the product");
       }
   })
@@ -312,8 +321,7 @@ function unlikeProduct(productSlug) {
       },
   })
   .then((response) => {
-      if (response.ok) {
-      } else {
+      if (!response.ok) {
           throw new Error("Failed to unlike the product");
       }
   })
@@ -393,33 +401,105 @@ const quantityInput = document.getElementById('quantityProduct');
 
 const addCart = document.getElementById('add-cart');
 const quantityCounter = document.getElementById('quantity-counter');
-    
+
 function add_cart() {
     quantityInput.value = 1;
     addCart.style.display = "none";
     quantityCounter.style.display = "flex";
-    add_to_cart();
+    add_to_cart().then(success => {
+        if (success) {
+            add_to_header_cart(); 
+        }
+    });
+}
+
+function add_to_header_cart() {
+    const cartDropDown = document.getElementById('CartDropDownItem');
+    let itemElement = document.getElementById(cartItem);
+    const quantity = parseInt(quantityInput.value);
+
+    if (itemElement) {
+        const quantityP = itemElement.querySelector('.flex.items-center.justify-end p');
+        if (quantityP) {
+            quantityP.innerText = quantity;
+        }
+    } else {
+        let priceHTML = productData.price_after_discount
+            ? `<span class="line-through truncate text-sm font-light text-gray-400">$${productData.price}</span> $${productData.price_after_discount}`
+            : `$${productData.price}`;
+
+        const newItemHTML = `
+            <div class="grid grid-cols-2" id="${cartItem}">
+                <div style="overflow: hidden;">
+                    <a href="${productData.url}" class="truncate text-sm font-semibold leading-none text-gray-900 dark:text-white hover:underline">
+                        ${productData.name}
+                    </a>
+                    <p class="mt-0.5 truncate text-sm font-normal text-gray-500 dark:text-gray-400">
+                        ${priceHTML}
+                    </p>
+                </div>
+                <div class="flex items-center justify-end gap-6">
+                    <p class="text-sm font-normal leading-none text-gray-500 dark:text-gray-400">${quantity}</p>
+                    <button type="button" onclick="document.getElementById('${cartItem}').remove()" class="text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-600">
+                        <span class="sr-only">Remove</span>
+                        <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M2 12a10 10 0 1 1 20 0 10 10 0 0 1-20 0Zm7.7-3.7a1 1 0 0 0-1.4 1.4l2.3 2.3-2.3 2.3a1 1 0 1 0 1.4 1.4l2.3-2.3 2.3 2.3a1 1 0 0 0 1.4-1.4L13.4 12l2.3-2.3a1 1 0 0 0-1.4-1.4L12 10.6 9.7 8.3Z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>`;
+        
+        cartDropDown.insertAdjacentHTML('beforeend', newItemHTML);
+    }
+}
+
+function reduce_from_header_cart() {
+    let itemElement = document.getElementById(cartItem);
+    if (itemElement) {
+        const quantity = parseInt(quantityInput.value);
+        const quantityP = itemElement.querySelector('.flex.items-center.justify-end p');
+        if (quantityP) {
+            quantityP.innerText = quantity;
+        }
+    }
+}
+
+function remove_from_header_cart(){
+    let itemElement = document.getElementById(cartItem);
+    if (itemElement) {
+        itemElement.remove();
+    }
 }
 
 incrementButton.addEventListener('click', function() {
-    const newQuantity = parseInt(quantityInput.value);
     quantityInput.value++;
     disableControls();
-    add_to_cart();
-    enableControls();
+    add_to_cart().then(success => {
+        if(success) {
+            add_to_header_cart(); 
+        }
+        enableControls();
+    });
 });
 
 decrementButton.addEventListener('click', function() {
-    const newQuantity = parseInt(quantityInput.value);
-    quantityInput.value--;
-    disableControls();
-    if (newQuantity <= 1) {
-        reduce_from_cart();
-        removeFromCart();
-    } else {
-      reduce_from_cart();
+    const currentQuantity = parseInt(quantityInput.value);
+    
+    if (currentQuantity > 0) {
+        quantityInput.value--;
+        disableControls();
+
+        reduce_from_cart().then(success => {
+            if (success) {
+                if (currentQuantity === 1) { 
+                    removeFromCart(); 
+                } else { 
+                    reduce_from_header_cart(); 
+                }
+            }
+            enableControls();
+        });
     }
-    enableControls();
 });
 
 function disableControls() {
@@ -434,15 +514,14 @@ function enableControls() {
     quantityInput.disabled = false;
 }
 
-
 function removeFromCart() {
     quantityInput.value = 0;
     addCart.style.display = "flex";
     quantityCounter.style.display = "none";
+    remove_from_header_cart();
     enableControls();
 }
 
-// star
 const stars = document.querySelectorAll('.star-button');
 const ratingValue = document.getElementById('rating-value');
 
@@ -461,7 +540,6 @@ star.addEventListener('click', () => {
 });
 
 document.getElementById('comment-form').addEventListener('submit', (e) => {
-  
   const comment = document.getElementById('comment').value;
   const rating = ratingValue.value;
   
@@ -480,7 +558,6 @@ document.getElementById('comment-form').addEventListener('submit', (e) => {
   const formData = new FormData();
   formData.append('rating', rating);
   formData.append('comment', comment);
-
-  });
+});
 </script>
 {% endblock script-section %}

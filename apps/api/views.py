@@ -2,6 +2,8 @@ from django.http import JsonResponse
 from django.views import View
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from apps.product.models import Product
 from apps.cart.utils import add_product_to_cart, reduce_product_from_cart
 
@@ -51,3 +53,20 @@ class ItemCartAPIView(LoginRequiredMixin, View):
             return JsonResponse({"status": "ok"}, status=200)
         except ValueError as e:
             return JsonResponse({"detail": str(e)}, status=400)
+
+
+class CartDetailAPIView(LoginRequiredMixin, View):
+    def get(self, request):
+        cart = request.user.cart
+        items = [
+            {
+                "name": item.product.name,
+                "slug": item.product.slug,
+                "price": item.product.price_after_discount or item.product.price,
+                "quantity": item.quantity,
+                "image": item.product.image.url,
+                "url": item.product.get_absolute_url,
+            }
+            for item in cart.items.select_related("product")
+        ]
+        return JsonResponse({"items": items})
